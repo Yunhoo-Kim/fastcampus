@@ -1,15 +1,19 @@
-class DatabaseHelper {
-  static final _databaseName = "kb.db";
-  static final _databaseVersion = 1;
-  static final table = "stock";
+import 'package:kb/main.dart';
+import 'package:sqflite/sqflite.dart';
 
-  static final columnId = "id";
-  static final columnDate = "date";
-  static final columnData = "data";
-  static final columnDuration = "duration";
-  static final columnStartTime = "startTime";
-  static final columnEndTime = "endTime";
-  static final columnDone = "done";
+import 'dart:convert';
+import 'package:path/path.dart';
+
+class DatabaseHelper {
+  static const _databaseName = "kb.db";
+  static const _databaseVersion = 1;
+  static const table = "stock";
+
+  static const columnId = "id";
+  static const columnPrice = "price";
+  static const columnName = "name";
+  static const columnAmount = "amount";
+  static const columnMarketCap = "marketCap";
 
   DatabaseHelper._privateConstructor();
 
@@ -39,15 +43,15 @@ class DatabaseHelper {
     await db.execute('''
           CREATE TABLE IF NOT EXISTS $table (
             $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnDate INTEGER DEFAULT 0,
-            $columnDuration INTEGER DEFAULT 0,
-            $columnDone INTEGER DEFAULT 0,
-            $columnStartTime INTEGER DEFAULT 0,
-            $columnEndTime INTEGER DEFAULT 0,
-            $columnData String
+            $columnPrice INTEGER DEFAULT 0,
+            $columnAmount String,
+            $columnMarketCap String,
+            $columnName String
           )
           ''');
-    
+
+  }
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
   }
 
   // Helper methods
@@ -62,11 +66,11 @@ class DatabaseHelper {
 
   Future<List<Stocks>> queryAllStock(int date) async {
     Database db = (await instance.database)!;
-    final _list =
+    final list =
     await db.query(table);
-//     await db.query(table, where: '$columnDate = ?', whereArgs: [date]);
-    return _list.map((_l) {
-      final w = Stocks.fromJson(json.decode(_l["data"] as String));
+//     await db.query(table, where: '$columnPrice = ?', whereArgs: [date]);
+    return list.map((l) {
+      final w = Stocks.fromJson(json.decode(l["data"] as String));
       return w;
     }).toList();
   }
