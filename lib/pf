@@ -1,0 +1,35 @@
+import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class Preference {
+
+  Future<Map<String, int>> getFastDays() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    int wholeFastDays = pref.getInt("wholeFastDays") ?? 0;
+    int wholeFastHours = pref.getInt("wholeFastHours") ?? 0;
+
+    return {"wholeFastDays": wholeFastDays, "wholeFastHours": wholeFastHours};
+  }
+
+
+  Future<void> setClickPurchase(bool clicked) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setBool("clickPurchase", clicked);
+  }
+
+  Future<bool> clickPurchase() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    bool darkMode = pref.getBool("clickPurchase") ?? false;
+
+    return darkMode;
+  }
+
+  Future<void> resetPref() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    await pref.clear();
+  }
+  
+}
